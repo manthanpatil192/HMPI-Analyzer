@@ -13,7 +13,7 @@ const TABS = [
   { id: 'calculator',  label: 'HMPI Calculator',      icon: <Calculator size={14} /> },
   { id: 'map',         label: 'GIS Heatmap',          icon: <Map size={14} /> },
   { id: 'predictive',  label: 'Predictive AI',        icon: <Cpu size={14} /> },
-  { id: 'blockchain',  label: 'Blockchain Audit',     icon: <ShieldCheck size={14} /> },
+  { id: 'blockchain',  label: 'Security Assessment',  icon: <ShieldCheck size={14} /> },
   { id: 'remediation', label: 'Remediation & Alerts', icon: <Wrench size={14} /> },
   { id: 'reports',     label: 'Reports & Data',       icon: <BarChart2 size={14} /> },
   { id: 'reference',   label: 'Reference Methods',    icon: <BookOpen size={14} /> },
@@ -23,7 +23,7 @@ const HERO_PILLS = [
   { icon: '🧪', label: '12 Heavy Metals', iconBg: '#dbeafe' },
   { icon: '📐', label: '5 Pollution Indices', iconBg: '#ccfbf1' },
   { icon: '🤖', label: 'LSTM / ARIMA Predictive AI', iconBg: '#f3e8ff' },
-  { icon: '🔗', label: 'Blockchain SHA-256 Audit', iconBg: '#dcfce7' },
+  { icon: '🛡️', label: 'Security Assessment & SHA-256 Audit', iconBg: '#dcfce7' },
   { icon: '🚨', label: 'Automated SMS / Email Alerts', iconBg: '#fee2e2' },
   { icon: '🗺️', label: 'GIS Hotspot Heatmap', iconBg: '#ffedd5' },
 ];

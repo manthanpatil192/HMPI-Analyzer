@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { MOCK_SAMPLES, runFullAnalysis, WHO_STANDARDS, METAL_COLORS } from '../utils/hmpiEngine';
+import { generateHMPIPdfReport } from '../utils/pdfGenerator';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, LineChart, Line, Legend, Cell } from 'recharts';
 import { FileUp, FileDown, Table2, ChevronRight, RefreshCw, Search, AlertTriangle, CheckCircle } from 'lucide-react';
 import Papa from 'papaparse';
@@ -166,6 +167,7 @@ export default function ReportsTab({ extraResults = [] }) {
               <th>HI Adult</th>
               <th>HI Child</th>
               <th>DATE</th>
+              <th>REPORT</th>
             </tr>
           </thead>
           <tbody>
@@ -175,15 +177,20 @@ export default function ReportsTab({ extraResults = [] }) {
               const hiChild = r.hhra?.child?.HI;
               return (
                 <tr key={i}>
-                  <td style={{ color: '#00d4ff', fontWeight: 600 }}>{r.sample_id}</td>
-                  <td style={{ color: '#e8f4fd', fontFamily: 'Inter', fontSize: 13 }}>{r.location || r.sample_info?.location}</td>
-                  <td style={{ color: CLASS_COLORS_MAP[cls?.class] || '#00d4ff', fontWeight: 700 }}>{r.hmpi?.value?.toFixed(3)}</td>
+                  <td style={{ color: '#2563eb', fontWeight: 700 }}>{r.sample_id}</td>
+                  <td style={{ color: 'var(--text-900)', fontFamily: 'Inter', fontSize: 13, fontWeight: 600 }}>{r.location || r.sample_info?.location}</td>
+                  <td style={{ color: CLASS_COLORS_MAP[cls?.class] || '#2563eb', fontWeight: 800 }}>{r.hmpi?.value?.toFixed(3)}</td>
                   <td><span className={`badge ${CLASS_MAP[cls?.class] || 'badge-moderate'}`}>{cls?.label}</span></td>
-                  <td style={{ color: CLASS_COLORS_MAP[r.hei?.classification?.class] || '#00d4ff' }}>{r.hei?.value?.toFixed(3)}</td>
-                  <td style={{ color: CLASS_COLORS_MAP[r.cd?.classification?.class] || '#00d4ff' }}>{r.cd?.value?.toFixed(3)}</td>
-                  <td style={{ color: hiAdult > 1 ? '#d63031' : '#00b894' }}>{hiAdult?.toFixed(4)}</td>
-                  <td style={{ color: hiChild > 1 ? '#d63031' : '#00b894' }}>{hiChild?.toFixed(4)}</td>
-                  <td style={{ color: '#4a6680', fontSize: 12 }}>{r.timestamp?.split('T')[0] || r.raw?.date || '-'}</td>
+                  <td style={{ color: CLASS_COLORS_MAP[r.hei?.classification?.class] || '#2563eb' }}>{r.hei?.value?.toFixed(3)}</td>
+                  <td style={{ color: CLASS_COLORS_MAP[r.cd?.classification?.class] || '#2563eb' }}>{r.cd?.value?.toFixed(3)}</td>
+                  <td style={{ color: hiAdult > 1 ? '#dc2626' : '#10b981', fontWeight: 700 }}>{hiAdult?.toFixed(4)}</td>
+                  <td style={{ color: hiChild > 1 ? '#dc2626' : '#10b981', fontWeight: 700 }}>{hiChild?.toFixed(4)}</td>
+                  <td style={{ color: 'var(--text-400)', fontSize: 12 }}>{r.timestamp?.split('T')[0] || r.raw?.date || '-'}</td>
+                  <td>
+                    <button className="btn btn-secondary btn-sm" onClick={() => generateHMPIPdfReport(r)} style={{ padding: '4px 10px', fontSize: 11 }}>
+                      <FileDown size={12} /> PDF
+                    </button>
+                  </td>
                 </tr>
               );
             })}

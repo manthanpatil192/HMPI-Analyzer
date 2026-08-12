@@ -33,7 +33,7 @@ export default function BlockchainTab() {
             </div>
             <div>
               <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 20, fontWeight: 800, color: 'var(--text-900)' }}>
-                Blockchain Data Integrity &amp; Immutable Audit Ledger
+                Security Assessment &amp; Data Integrity Audit
               </div>
               <div style={{ fontSize: 13, color: 'var(--text-500)', marginTop: 2 }}>
                 Tamper-proof cryptographic SHA-256 verification preventing falsification of groundwater lab data

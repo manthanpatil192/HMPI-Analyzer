@@ -1,15 +1,112 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip as LeafletTooltip, Circle } from 'react-leaflet';
-import { MOCK_SAMPLES, runFullAnalysis } from '../utils/hmpiEngine';
+import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip as LeafletTooltip, Circle, Polygon } from 'react-leaflet';
+import { MOCK_SAMPLES, runFullAnalysis, WHO_STANDARDS } from '../utils/hmpiEngine';
 import { HMPIGauge } from './SharedComponents';
-import { Map, Layers, Flame, Filter } from 'lucide-react';
+import { generateHMPIPdfReport } from '../utils/pdfGenerator';
+import { Map, Layers, Flame, FileDown, Info, ShieldAlert, Sparkles, X, Droplets, Wrench, CheckCircle } from 'lucide-react';
 
 const CLASS_COLORS = { safe: '#10b981', moderate: '#f59e0b', high: '#f97316', critical: '#dc2626' };
+
+// Indian States Geo-Polygons & Contamination Risk Levels for State-wise Heatmap
+const STATE_RISK_MAP = [
+  {
+    name: 'Bihar', risk: 'high', color: '#dc2626', opacity: 0.35,
+    avgHMPI: 184.2, description: 'High Arsenic (As) & Iron (Fe) aquifer contamination across Gangetic plain aquifers.',
+    polygon: [[27.5, 84.0], [27.5, 88.0], [24.5, 88.0], [24.5, 84.0]],
+  },
+  {
+    name: 'Uttar Pradesh', risk: 'critical', color: '#dc2626', opacity: 0.38,
+    avgHMPI: 215.6, description: 'Severe Industrial Effluents & Chromium (Cr), Lead (Pb) contamination near Kanpur tannery belt.',
+    polygon: [[30.0, 77.0], [30.0, 84.5], [24.0, 84.5], [24.0, 77.0]],
+  },
+  {
+    name: 'Gujarat', risk: 'high', color: '#f97316', opacity: 0.32,
+    avgHMPI: 168.4, description: 'Chemical industrial belt (Vapi/Ankleshwar) with elevated Cadmium (Cd) & Lead (Pb).',
+    polygon: [[24.5, 68.5], [24.5, 74.5], [20.0, 74.5], [20.0, 68.5]],
+  },
+  {
+    name: 'Chhattisgarh', risk: 'moderate', color: '#f59e0b', opacity: 0.28,
+    avgHMPI: 135.0, description: 'Mining & Steel plant run-off causing Iron (Fe) & Manganese (Mn) elevation.',
+    polygon: [[24.0, 80.0], [24.0, 84.5], [17.8, 84.5], [17.8, 80.0]],
+  },
+  {
+    name: 'Rajasthan', risk: 'moderate', color: '#f59e0b', opacity: 0.22,
+    avgHMPI: 112.8, description: 'Deep groundwater salinity & localized Fluoride/Arsenic pockets in arid zones.',
+    polygon: [[30.2, 69.5], [30.2, 78.2], [23.0, 78.2], [23.0, 69.5]],
+  },
+  {
+    name: 'Kerala', risk: 'safe', color: '#10b981', opacity: 0.20,
+    avgHMPI: 76.5, description: 'High coastal monsoon recharge maintains safe HMPI limits across open wells.',
+    polygon: [[12.8, 74.8], [12.8, 77.5], [8.2, 77.5], [8.2, 74.8]],
+  },
+];
+
+// Rich Descriptions & Remediation Plans per City
+const CITY_DETAILS_DATABASE = {
+  'Patna, Bihar': {
+    description: 'Patna district exhibits high Arsenic (As = 0.025 mg/L) and Iron (Fe = 0.88 mg/L) levels in shallow aquifers (30–50m) due to natural alluvial sediment dissolution along the Ganges river bed.',
+    lastUpdated: '12 March 2025',
+    aqiQuality: 'Unsafe for direct drinking',
+    treatmentSteps: [
+      'Deploy Point-of-Use Activated Alumina Filters for household drinking.',
+      'Construct community Iron & Arsenic Removal Plants (IARPs).',
+      'Drill deeper tube-wells into confined deeper aquifers (>100m depth).',
+    ],
+  },
+  'Kanpur, UP': {
+    description: 'Kanpur Industrial zone suffers from heavy Chromium (Cr = 0.065 mg/L) and Lead (Pb = 0.032 mg/L) contamination driven by tannery effluent discharge and untreated industrial sludge.',
+    lastUpdated: '14 March 2025',
+    aqiQuality: 'Critical Contamination Breach',
+    treatmentSteps: [
+      'Enforce zero liquid discharge (ZLD) at all leather tanneries.',
+      'Install Cation/Anion Exchange Resins & RO systems at municipal waterworks.',
+      'Avoid using open well water for cooking or agricultural irrigation.',
+    ],
+  },
+  'Bhilai, Chhattisgarh': {
+    description: 'Bhilai urban region shows elevated Iron (Fe = 2.8 mg/L) and Chromium (Cr = 0.12 mg/L) attributed to steel plant slag runoff and mining activities.',
+    lastUpdated: '18 March 2025',
+    aqiQuality: 'Moderate-High Industrial Risk',
+    treatmentSteps: [
+      'Install catalytic oxidation filters (Pyrolusite/Greensand) to precipitate Iron.',
+      'Apply chemical coagulation with lime softening for industrial wastewater.',
+    ],
+  },
+  'Jodhpur, Rajasthan': {
+    description: 'Jodhpur deep aquifers show low overall heavy metal risk (HMPI = 64.2), though high total dissolved solids (TDS) and hardness exist in arid pockets.',
+    lastUpdated: '01 April 2025',
+    aqiQuality: 'Safe Heavy Metal Index',
+    treatmentSteps: [
+      'Standard RO desalination for domestic TDS reduction.',
+      'Maintain quarterly hydrogeological surveillance.',
+    ],
+  },
+  'Vapi, Gujarat': {
+    description: 'Vapi chemical estate groundwater contains dangerous levels of Lead (Pb = 0.055 mg/L), Cadmium (Cd = 0.011 mg/L), and Mercury (Hg = 0.012 mg/L).',
+    lastUpdated: '05 April 2025',
+    aqiQuality: 'Extreme Toxic Risk',
+    treatmentSteps: [
+      'EMERGENCY: Halt all domestic groundwater pumping immediately.',
+      'Supply piped canal water to affected residential colonies.',
+      'Deploy Thiol-functionalized resins & Nano-filtration purifiers.',
+    ],
+  },
+  'Alappuzha, Kerala': {
+    description: 'Alappuzha coastal region groundwater is overall safe (HMPI = 78.4) with slight localized Iron elevation due to peat soil oxidation.',
+    lastUpdated: '08 April 2025',
+    aqiQuality: 'Safe Drinking Quality',
+    treatmentSteps: [
+      'Use simple sand-charcoal aeration household filters.',
+      'Regular chlorination for bacterial safety in open wells.',
+    ],
+  },
+};
 
 export default function MapTab({ extraResults = [] }) {
   const [allSamples, setAllSamples] = useState([]);
   const [selected, setSelected] = useState(null);
   const [colorBy, setColorBy] = useState('hmpi');
+  const [showStateRisk, setShowStateRisk] = useState(true);
   const [isHeatmapMode, setIsHeatmapMode] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
@@ -37,6 +134,13 @@ export default function MapTab({ extraResults = [] }) {
     </div>
   );
 
+  const activeCityInfo = selected ? CITY_DETAILS_DATABASE[selected.location || selected.sample_info?.location] || {
+    description: `Groundwater station at ${selected.location || selected.sample_id}. Evaluated using WHO 2017 drinking water standards.`,
+    lastUpdated: selected.timestamp?.split('T')[0] || '2025-04-10',
+    aqiQuality: selected.hmpi?.classification?.label || 'Analyzed',
+    treatmentSteps: ['Install Point-of-Use Reverse Osmosis (RO) filtration unit.', 'Conduct bi-monthly laboratory surveillance.'],
+  } : null;
+
   return (
     <div style={{ animation: 'fadeUp 0.4s ease both' }}>
       
@@ -44,21 +148,25 @@ export default function MapTab({ extraResults = [] }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 14 }}>
         <div>
           <div className="section-title">
-            <div className="section-line" /> Geo-Spatial HMPI Distribution &amp; GIS Hotspot Map
+            <div className="section-line" /> State-Wise GIS Contamination Heatmap &amp; City Explorer
           </div>
           <div style={{ fontSize: 13, color: 'var(--text-400)', marginTop: 4 }}>
-            {allSamples.length} groundwater monitoring stations across India
+            Color-coded Indian states by regional groundwater contamination risk + City stations
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => setIsHeatmapMode(!isHeatmapMode)} className={`btn btn-sm ${isHeatmapMode ? 'btn-danger' : 'btn-secondary'}`}>
-            <Flame size={14} /> {isHeatmapMode ? 'Disable Heatmap' : 'Enable GIS Heatmap Mode'}
+          <button onClick={() => setShowStateRisk(!showStateRisk)} className={`btn btn-sm ${showStateRisk ? 'btn-primary' : 'btn-ghost'}`}>
+            <Layers size={14} /> {showStateRisk ? 'State Risk Shading (ON)' : 'State Risk Shading (OFF)'}
           </button>
 
-          <span style={{ fontSize: 13, color: 'var(--text-400)', marginLeft: 8 }}>Color by:</span>
+          <button onClick={() => setIsHeatmapMode(!isHeatmapMode)} className={`btn btn-sm ${isHeatmapMode ? 'btn-danger' : 'btn-secondary'}`}>
+            <Flame size={14} /> {isHeatmapMode ? 'Disable Heatmap' : 'GIS Radial Heatmap'}
+          </button>
+
+          <span style={{ fontSize: 13, color: 'var(--text-400)', marginLeft: 6 }}>Color by:</span>
           {['hmpi', 'hei', 'cd'].map(opt => (
-            <button key={opt} onClick={() => setColorBy(opt)} className={`btn btn-sm ${colorBy === opt ? 'btn-primary' : 'btn-ghost'}`}
+            <button key={opt} onClick={() => setColorBy(opt)} className={`btn btn-sm ${colorBy === opt ? 'btn-secondary' : 'btn-ghost'}`}
               style={{ textTransform: 'uppercase', fontSize: 11 }}>{opt}</button>
           ))}
         </div>
@@ -66,13 +174,25 @@ export default function MapTab({ extraResults = [] }) {
 
       <div className="grid-2" style={{ alignItems: 'start' }}>
         {/* Leaflet Map container */}
-        <div style={{ borderRadius: 20, overflow: 'hidden', border: '1.5px solid var(--border)', boxShadow: 'var(--shadow-md)', height: 540 }}>
-          <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: '100%', width: '100%' }} zoomControl={true}>
+        <div style={{ borderRadius: 20, overflow: 'hidden', border: '1.5px solid var(--border)', boxShadow: 'var(--shadow-md)', height: 560, position: 'relative' }}>
+          <MapContainer center={[22.5937, 78.9629]} zoom={5} style={{ height: '100%', width: '100%' }} zoomControl={true}>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
+            {/* State-Level Choropleth Heatmap Layer */}
+            {showStateRisk && STATE_RISK_MAP.map((st, i) => (
+              <Polygon key={i} positions={st.polygon} pathOptions={{ color: st.color, fillColor: st.color, fillOpacity: st.opacity, weight: 1.5, dashArray: '4 4' }}>
+                <LeafletTooltip sticky>
+                  <strong>{st.name} State Groundwater Zone</strong><br />
+                  Average State HMPI: <span style={{ color: st.color, fontWeight: 700 }}>{st.avgHMPI}</span><br />
+                  <span style={{ fontSize: 11, color: '#64748b' }}>{st.description}</span>
+                </LeafletTooltip>
+              </Polygon>
+            ))}
+
+            {/* Station Markers */}
             {allSamples.map((result, i) => {
               const lat = result.coordinates?.lat || result.sample_info?.coordinates?.lat;
               const lng = result.coordinates?.lng || result.sample_info?.coordinates?.lng;
@@ -85,11 +205,11 @@ export default function MapTab({ extraResults = [] }) {
                 <g key={i}>
                   {/* GIS Heatmap Hotspot Radial Glow */}
                   {isHeatmapMode && (
-                    <Circle center={[lat, lng]} radius={radius * 3500}
+                    <Circle center={[lat, lng]} radius={radius * 4000}
                       pathOptions={{
                         color: isCritical ? '#dc2626' : color,
                         fillColor: isCritical ? '#ef4444' : color,
-                        fillOpacity: isCritical ? 0.35 : 0.2,
+                        fillOpacity: isCritical ? 0.38 : 0.22,
                         weight: 0,
                       }} />
                   )}
@@ -99,17 +219,9 @@ export default function MapTab({ extraResults = [] }) {
                     eventHandlers={{ click: () => setSelected(result) }}>
                     <LeafletTooltip>
                       <strong style={{ color: '#0f172a' }}>{result.location || result.sample_info?.location}</strong><br />
-                      HMPI: <span style={{ color, fontWeight: 700 }}>{result.hmpi?.value?.toFixed(2)}</span> ({result.hmpi?.classification?.label})
+                      HMPI: <span style={{ color, fontWeight: 700 }}>{result.hmpi?.value?.toFixed(2)}</span> ({result.hmpi?.classification?.label})<br />
+                      <span style={{ fontSize: 10, color: '#2563eb' }}>Click marker for rich info &amp; PDF report</span>
                     </LeafletTooltip>
-                    <Popup>
-                      <div style={{ minWidth: 210 }}>
-                        <div style={{ fontWeight: 800, fontSize: 14, color: '#0f172a' }}>{result.location || result.sample_info?.location}</div>
-                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Sample ID: <code>{result.sample_id}</code></div>
-                        <div className="divider" style={{ margin: '8px 0' }} />
-                        <div style={{ fontSize: 13 }}>HMPI Score: <b style={{ color: getColor(result) }}>{result.hmpi?.value?.toFixed(2)}</b></div>
-                        <div style={{ fontSize: 12, color: '#64748b' }}>Status: <b>{result.hmpi?.classification?.label}</b></div>
-                      </div>
-                    </Popup>
                   </CircleMarker>
                 </g>
               );
@@ -117,36 +229,100 @@ export default function MapTab({ extraResults = [] }) {
           </MapContainer>
         </div>
 
-        {/* Sidebar station details */}
+        {/* Sidebar station details & rich city popup */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           
-          {/* GIS Legend */}
-          <div className="card">
-            <div className="card-title" style={{ fontSize: 15, marginBottom: 12 }}>
-              <Layers size={16} color="#2563eb" /> Map Classification &amp; GIS Intensity
-            </div>
-            {[
-              { label: 'Safe (HMPI < 100)', color: '#10b981' },
-              { label: 'Moderate Risk (100–200)', color: '#f59e0b' },
-              { label: 'High Risk (200–300)', color: '#f97316' },
-              { label: 'Critical Breach (> 300)', color: '#dc2626' },
-            ].map(l => (
-              <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                <div style={{ width: 14, height: 14, borderRadius: '50%', background: l.color }} />
-                <span style={{ fontSize: 13, color: 'var(--text-700)', fontWeight: 500 }}>{l.label}</span>
+          {/* Selected Station Rich Popup Modal Card */}
+          {selected ? (
+            <div className="card" style={{ animation: 'fadeUp 0.3s ease', border: '2px solid #2563eb', background: '#ffffff', boxShadow: 'var(--shadow-lg)' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 18, fontWeight: 800, color: '#0f172a' }}>
+                    📍 {selected.location || selected.sample_info?.location}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 2 }}>
+                    ID: <code>{selected.sample_id}</code> · Date: <strong>{activeCityInfo.lastUpdated}</strong>
+                  </div>
+                </div>
+                <button onClick={() => setSelected(null)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <X size={16} color="#64748b" />
+                </button>
               </div>
-            ))}
-            <div style={{ marginTop: 10, padding: '10px 12px', background: '#eff6ff', borderRadius: 8, fontSize: 12, color: '#1e40af', border: '1px solid #bfdbfe' }}>
-              💡 Marker radius scales with HMPI pollution load. Enable GIS Heatmap mode to visualize regional contamination plume dispersion.
-            </div>
-          </div>
 
-          {/* All Stations Table */}
-          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '14px 18px', borderBottom: '1.5px solid var(--border)', background: '#f8faff' }}>
-              <div className="card-title" style={{ fontSize: 14 }}>Groundwater Stations ({allSamples.length})</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 14, background: '#f8faff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '12px' }}>
+                <HMPIGauge value={selected.hmpi?.value} size={110} />
+                <div style={{ flex: 1 }}>
+                  <span className={`badge ${selected.hmpi?.classification?.class === 'safe' ? 'badge-safe' : 'badge-critical'}`}>
+                    {activeCityInfo.aqiQuality}
+                  </span>
+                  <div style={{ fontSize: 12, color: 'var(--text-500)', marginTop: 8, lineHeight: 1.5 }}>
+                    <strong>Coordinates:</strong> {selected.coordinates?.lat || 25.5}° N, {selected.coordinates?.lng || 85.1}° E
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--text-500)', marginTop: 2 }}>
+                    <strong>Well Depth:</strong> {selected.depth || selected.sample_info?.depth || '45'} meters
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ fontSize: 12.5, color: '#334155', lineHeight: 1.6, marginBottom: 14, background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '12px' }}>
+                <strong style={{ color: '#166534' }}>Regional Description:</strong><br />
+                {activeCityInfo.description}
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>
+                  🛠️ How to Treat Water &amp; Ways to Cope:
+                </div>
+                <ul style={{ paddingLeft: 18, fontSize: 12, color: '#475569', lineHeight: 1.6 }}>
+                  {activeCityInfo.treatmentSteps.map((step, idx) => (
+                    <li key={idx} style={{ marginBottom: 4 }}>{step}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <button className="btn btn-primary btn-full" onClick={() => generateHMPIPdfReport(selected)}>
+                <FileDown size={16} /> Download Full PDF Report for {selected.location || selected.sample_id}
+              </button>
             </div>
-            <div style={{ overflowY: 'auto', maxHeight: 270 }}>
+          ) : (
+            /* GIS Legend & State Risk Breakdown */
+            <div className="card">
+              <div className="card-title" style={{ fontSize: 15, marginBottom: 12 }}>
+                <Layers size={16} color="#2563eb" /> State-Wise Contamination Heatmap Legend
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+                {[
+                  { label: 'Uttar Pradesh (HMPI 215.6)', status: 'Critical Tannery Chromium/Lead', color: '#dc2626' },
+                  { label: 'Bihar (HMPI 184.2)', status: 'High Gangetic Arsenic Risk', color: '#dc2626' },
+                  { label: 'Gujarat (HMPI 168.4)', status: 'Vapi Industrial Effluents', color: '#f97316' },
+                  { label: 'Chhattisgarh (HMPI 135.0)', status: 'Mining Iron & Manganese', color: '#f59e0b' },
+                  { label: 'Rajasthan (HMPI 112.8)', status: 'Arid Salinity & Fluoride', color: '#f59e0b' },
+                  { label: 'Kerala (HMPI 76.5)', status: 'Monsoon Safe Coastal Aquifers', color: '#10b981' },
+                ].map((s, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, background: '#f8faff', border: '1px solid #e2e8f0', padding: '8px 12px', borderRadius: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: s.color }} />
+                      <strong style={{ color: '#0f172a' }}>{s.label}</strong>
+                    </div>
+                    <span style={{ fontSize: 11, color: '#64748b' }}>{s.status}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ padding: '10px 12px', background: '#eff6ff', borderRadius: 8, fontSize: 12, color: '#1e40af', border: '1px solid #bfdbfe' }}>
+                💡 <strong>Click any city marker on the map</strong> to open full details, contamination descriptions, treatment guidelines, and PDF export!
+              </div>
+            </div>
+          )}
+
+          {/* All Stations Summary List */}
+          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 18px', borderBottom: '1.5px solid var(--border)', background: '#f8faff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="card-title" style={{ fontSize: 14 }}>Groundwater Stations ({allSamples.length})</div>
+              <span style={{ fontSize: 11, color: '#64748b' }}>Click to inspect</span>
+            </div>
+            <div style={{ overflowY: 'auto', maxHeight: 220 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
@@ -179,19 +355,6 @@ export default function MapTab({ extraResults = [] }) {
               </table>
             </div>
           </div>
-
-          {/* Selected Station Card */}
-          {selected && (
-            <div className="card" style={{ animation: 'fadeUp 0.3s ease', border: '1.5px solid #2563eb' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                <div className="card-title" style={{ fontSize: 15 }}>📍 {selected.location || selected.sample_info?.location}</div>
-                <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 18 }}>×</button>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
-                <HMPIGauge value={selected.hmpi?.value} size={120} />
-              </div>
-            </div>
-          )}
 
         </div>
       </div>

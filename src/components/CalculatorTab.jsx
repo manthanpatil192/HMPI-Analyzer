@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { WHO_STANDARDS, METAL_COLORS, MOCK_SAMPLES, runFullAnalysis } from '../utils/hmpiEngine';
+import { generateHMPIPdfReport } from '../utils/pdfGenerator';
 import { MetalProgressBar, HMPIGauge, FormulaCard } from './SharedComponents';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell, CartesianGrid
 } from 'recharts';
-import { Beaker, FlaskConical, Plus, Zap, AlertTriangle, ArrowRight, RefreshCw, Sparkles } from 'lucide-react';
+import { Beaker, FlaskConical, Plus, Zap, AlertTriangle, ArrowRight, RefreshCw, Sparkles, FileDown } from 'lucide-react';
 
 const METALS = Object.keys(WHO_STANDARDS);
 
@@ -307,11 +308,13 @@ export default function CalculatorTab({ onAddResult }) {
                 <div style={{ fontSize: 13, color: 'var(--text-500)', marginTop: 2 }}>{hmpiCls?.description}</div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 10 }}>
-              <span style={{ fontSize: 12, color: 'var(--text-400)' }}>Sample:</span>
-              <strong style={{ fontSize: 13, color: 'var(--text-700)' }}>{result.location || result.sample_id}</strong>
-              <span style={{ color: 'var(--text-300)' }}>·</span>
-              <span style={{ fontSize: 12, color: 'var(--text-400)' }}>{result.timestamp?.split('T')[0]}</span>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ fontSize: 12, color: 'var(--text-400)' }}>
+                Sample: <strong style={{ color: 'var(--text-700)' }}>{result.location || result.sample_id}</strong>
+              </div>
+              <button className="btn btn-primary btn-sm" onClick={() => generateHMPIPdfReport(result)} style={{ boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}>
+                <FileDown size={14} /> Download Official PDF Report
+              </button>
             </div>
           </div>
 
