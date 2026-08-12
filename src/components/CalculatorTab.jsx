@@ -137,6 +137,51 @@ export default function CalculatorTab({ onAddResult }) {
   return (
     <div style={{ animation: 'fadeUp 0.4s ease both' }}>
 
+      {/* ── BEGINNER EASY GUIDE CARD ─────────────────────── */}
+      <div className="card mb-24" style={{ background: '#ffffff', border: '1.5px solid #bfdbfe', boxShadow: 'var(--shadow-md)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: '#eff6ff', border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+            💡
+          </div>
+          <div>
+            <div className="card-title" style={{ fontSize: 16, color: '#1e40af' }}>How to Use This App — 3 Easy Steps for Beginners</div>
+            <div style={{ fontSize: 12.5, color: '#64748b' }}>No technical knowledge required! Follow these simple steps to analyze water quality.</div>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 800, color: '#2563eb', marginBottom: 4 }}>
+              <span style={{ background: '#dbeafe', width: 22, height: 22, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>1</span>
+              Pick a Sample or Enter Values
+            </div>
+            <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>
+              Click any city below (e.g. <strong>Patna</strong> or <strong>Kanpur</strong>) to auto-fill sample data, or enter lab test values manually.
+            </div>
+          </div>
+
+          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 800, color: '#2563eb', marginBottom: 4 }}>
+              <span style={{ background: '#dbeafe', width: 22, height: 22, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>2</span>
+              Click "Compute All Indices"
+            </div>
+            <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>
+              Press the big blue button. The system will calculate Heavy Metal Pollution Indices against WHO &amp; BIS safety standards.
+            </div>
+          </div>
+
+          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 800, color: '#2563eb', marginBottom: 4 }}>
+              <span style={{ background: '#dbeafe', width: 22, height: 22, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12 }}>3</span>
+              View Risk &amp; Solutions
+            </div>
+            <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>
+              Check if water is <strong>Safe (Green)</strong> or <strong>Unsafe (Red)</strong>, view Health Risk Assessment, and check recommended treatment solutions.
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ── QUICK LOAD SAMPLES ─────────────────────────── */}
       <div className="card mb-24" style={{ background: 'linear-gradient(135deg, #f8faff 0%, #f0fdf4 100%)', borderColor: '#dbeafe' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
@@ -144,8 +189,8 @@ export default function CalculatorTab({ onAddResult }) {
             <Sparkles size={18} color="white" />
           </div>
           <div>
-            <div className="card-title" style={{ marginBottom: 1 }}>Quick Load — Demo Samples</div>
-            <div className="card-subtitle" style={{ marginBottom: 0 }}>Real Indian groundwater survey data. Click to auto-populate all fields.</div>
+            <div className="card-title" style={{ marginBottom: 1 }}>Step 1: Quick Load — Click Any City Demo Sample</div>
+            <div className="card-subtitle" style={{ marginBottom: 0 }}>Click any city card below to instantly populate the form with real groundwater survey data.</div>
           </div>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
