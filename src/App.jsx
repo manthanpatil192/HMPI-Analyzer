@@ -6,12 +6,15 @@ import ReferenceTab from './components/ReferenceTab';
 import PredictiveTab from './components/PredictiveTab';
 import BlockchainTab from './components/BlockchainTab';
 import RemediationTab from './components/RemediationTab';
+import HealthMetricsTab from './components/HealthMetricsTab';
+import LoginModal from './components/LoginModal';
 import { NotificationStack, useNotifications } from './components/SharedComponents';
-import { Calculator, Map, BarChart2, BookOpen, Droplets, Cpu, ShieldCheck, Wrench, Sparkles } from 'lucide-react';
+import { Calculator, Map, BarChart2, BookOpen, Droplets, Cpu, ShieldCheck, Wrench, HeartPulse, User, LogIn } from 'lucide-react';
 
 const TABS = [
   { id: 'calculator',  label: 'HMPI Calculator',      icon: <Calculator size={14} /> },
   { id: 'map',         label: 'GIS Heatmap',          icon: <Map size={14} /> },
+  { id: 'health',      label: 'Health Metrics',       icon: <HeartPulse size={14} /> },
   { id: 'predictive',  label: 'Predictive AI',        icon: <Cpu size={14} /> },
   { id: 'blockchain',  label: 'Security Assessment',  icon: <ShieldCheck size={14} /> },
   { id: 'remediation', label: 'Remediation & Alerts', icon: <Wrench size={14} /> },
@@ -22,6 +25,7 @@ const TABS = [
 const HERO_PILLS = [
   { icon: '🧪', label: '12 Heavy Metals', iconBg: '#dbeafe' },
   { icon: '📐', label: '5 Pollution Indices', iconBg: '#ccfbf1' },
+  { icon: '❤️', label: 'Health Impact Assessment', iconBg: '#ffe4e6' },
   { icon: '🤖', label: 'LSTM / ARIMA Predictive AI', iconBg: '#f3e8ff' },
   { icon: '🛡️', label: 'Security Assessment & SHA-256 Audit', iconBg: '#dcfce7' },
   { icon: '🚨', label: 'Automated SMS / Email Alerts', iconBg: '#fee2e2' },
@@ -31,6 +35,9 @@ const HERO_PILLS = [
 export default function App() {
   const [activeTab, setActiveTab] = useState('calculator');
   const [extraResults, setExtraResults] = useState([]);
+  const [user, setUser] = useState({ name: 'Dr. Sunil Dangi', role: 'researcher' });
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
   const { notifs, addNotif, removeNotif } = useNotifications();
 
   const handleAddResult = (result) => {
@@ -40,6 +47,12 @@ export default function App() {
       `Analysis complete — ${result.location || result.sample_id} · HMPI: ${result.hmpi?.value?.toFixed(2)} (${cls?.label})`,
       cls?.class === 'safe' ? 'success' : 'error'
     );
+  };
+
+  const roleTitles = {
+    researcher: 'Researcher',
+    scientist: 'Scientist',
+    policymaker: 'Policy Maker',
   };
 
   return (
@@ -58,7 +71,7 @@ export default function App() {
         <nav className="nav">
           <div className="nav-inner">
             {/* Logo */}
-            <div className="nav-logo">
+            <div className="nav-logo" onClick={() => setActiveTab('calculator')}>
               <div className="nav-logo-icon">
                 <Droplets size={20} color="white" />
               </div>
@@ -79,8 +92,23 @@ export default function App() {
               ))}
             </div>
 
-            {/* Right badges */}
+            {/* Right badges & User Role Profile */}
             <div className="nav-right">
+              <button onClick={() => setIsLoginOpen(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: '#f8fafc', border: '1.5px solid var(--border)',
+                  borderRadius: 20, padding: '5px 14px', cursor: 'pointer',
+                  fontSize: 12, fontWeight: 700, color: 'var(--text-700)',
+                  transition: 'all 0.18s'
+                }}>
+                <User size={13} color="#2563eb" />
+                <span>{user.name}</span>
+                <span style={{ color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '1px 8px', borderRadius: 10, fontSize: 10.5, textTransform: 'capitalize' }}>
+                  {roleTitles[user.role] || user.role}
+                </span>
+              </button>
+
               <div className="nav-who-badge">
                 <div className="nav-who-dot" />
                 WHO 2017 Standards
@@ -107,14 +135,13 @@ export default function App() {
 
             {/* Subtitle */}
             <p className="hero-sub">
-              Automates HMPI, HEI, Contamination Factor, Degree of Contamination &amp; Human Health Risk Assessment
-              with <strong>Blockchain SHA-256 Data Integrity, LSTM Predictive Forecasting &amp; GIS Heatmaps</strong>.
+              Automates HMPI, HEI, Contamination Factor, Degree of Contamination, <strong>Health Impact Assessment</strong> &amp; Security Assessment.
             </p>
 
             {/* Feature pills */}
             <div className="hero-pills">
               {HERO_PILLS.map((p, i) => (
-                <div key={i} className="hero-pill" style={{ animationDelay: `${i * 0.05}s` }}>
+                <div key={i} className="hero-pill" style={{ animationDelay: `${i * 0.04}s` }}>
                   <div className="hero-pill-icon" style={{ background: p.iconBg }}>{p.icon}</div>
                   {p.label}
                 </div>
@@ -124,11 +151,11 @@ export default function App() {
             {/* Stats strip */}
             <div className="hero-stats-row">
               {[
-                { val: '12', lbl: 'Heavy Metals' },
+                { val: '17', lbl: 'Groundwater Stations' },
                 { val: '5',  lbl: 'Pollution Indices' },
-                { val: 'LSTM / ARIMA', lbl: 'AI Forecast' },
-                { val: 'SHA-256', lbl: 'Blockchain Audit' },
-                { val: 'GIS Heatmap', lbl: 'Hotspot Mapping' },
+                { val: 'Health Impact', lbl: 'Pop. Assessment' },
+                { val: 'SHA-256', lbl: 'Security Audit' },
+                { val: 'GIS Heatmap', lbl: 'Hotspot Zones' },
               ].map((s, i) => (
                 <div key={i} className="hero-stat">
                   <div className="hero-stat-val">{s.val}</div>
@@ -143,6 +170,7 @@ export default function App() {
         <main className="main">
           {activeTab === 'calculator'  && <CalculatorTab onAddResult={handleAddResult} />}
           {activeTab === 'map'         && <MapTab extraResults={extraResults} />}
+          {activeTab === 'health'      && <HealthMetricsTab />}
           {activeTab === 'predictive'  && <PredictiveTab />}
           {activeTab === 'blockchain'  && <BlockchainTab />}
           {activeTab === 'remediation' && <RemediationTab />}
@@ -162,6 +190,9 @@ export default function App() {
           </div>
         </footer>
       </div>
+
+      {/* Login / Role Selection Modal */}
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLogin={u => setUser(u)} currentUser={user} />
 
       <NotificationStack notifs={notifs} onRemove={removeNotif} />
     </>

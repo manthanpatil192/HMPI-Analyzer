@@ -491,4 +491,59 @@ export const MOCK_SAMPLES = [
     coordinates: { lat: 9.4981, lng: 76.3388 }, depth: 15, source_type: 'Open Well', date: '2025-04-08',
     concentrations: { As: 0.006, Fe: 1.5, Mn: 0.62, Cu: 0.28, Zn: 0.9, Pb: 0.009, Ni: 0.02, Cr: 0.018 },
   },
+  {
+    id: 'GW-007', location: 'Mumbai Industrial Area', district: 'Thane', state: 'Maharashtra',
+    coordinates: { lat: 19.0760, lng: 72.8777 }, depth: 32, source_type: 'Borewell', date: '2025-04-10',
+    concentrations: { Pb: 0.042, Cd: 0.008, Cr: 0.075, Cu: 0.95, Fe: 1.1, Mn: 0.38, Ni: 0.05, Zn: 3.2 },
+  },
+  {
+    id: 'GW-008', location: 'Delhi Yamuna Basin', district: 'East Delhi', state: 'Delhi',
+    coordinates: { lat: 28.6139, lng: 77.2090 }, depth: 40, source_type: 'Handpump', date: '2025-04-12',
+    concentrations: { As: 0.018, Pb: 0.028, Cd: 0.006, Cr: 0.058, Fe: 1.8, Mn: 0.45, Ni: 0.06 },
+  },
+  {
+    id: 'GW-009', location: 'Kolkata Hooghly Zone', district: 'Kolkata', state: 'West Bengal',
+    coordinates: { lat: 22.5726, lng: 88.3639 }, depth: 55, source_type: 'Borewell', date: '2025-04-14',
+    concentrations: { As: 0.038, Fe: 2.1, Mn: 0.72, Pb: 0.015, Cd: 0.003, Cr: 0.032 },
+  },
+  {
+    id: 'GW-010', location: 'Chennai Industrial Belt', district: 'Chennai', state: 'Tamil Nadu',
+    coordinates: { lat: 13.0827, lng: 80.2707 }, depth: 50, source_type: 'Borewell', date: '2025-04-15',
+    concentrations: { Cr: 0.062, Ni: 0.045, Pb: 0.022, Fe: 0.9, Cu: 0.75, Zn: 2.4 },
+  },
+  {
+    id: 'GW-011', location: 'Hyderabad Peenya Zone', district: 'Hyderabad', state: 'Telangana',
+    coordinates: { lat: 17.3850, lng: 78.4867 }, depth: 75, source_type: 'Borewell', date: '2025-04-16',
+    concentrations: { As: 0.012, Pb: 0.024, Cd: 0.005, Cr: 0.048, Fe: 0.65, Mn: 0.28 },
+  },
+  {
+    id: 'GW-012', location: 'Bengaluru Peenya Estate', district: 'Bengaluru Urban', state: 'Karnataka',
+    coordinates: { lat: 12.9716, lng: 77.5946 }, depth: 90, source_type: 'Borewell', date: '2025-04-18',
+    concentrations: { Cr: 0.082, Ni: 0.068, Pb: 0.031, Cd: 0.004, Fe: 0.75, Cu: 1.1 },
+  },
+  {
+    id: 'GW-013', location: 'Varanasi Gangetic Plain', district: 'Varanasi', state: 'Uttar Pradesh',
+    coordinates: { lat: 25.3176, lng: 82.9739 }, depth: 42, source_type: 'Handpump', date: '2025-04-19',
+    concentrations: { As: 0.022, Pb: 0.016, Fe: 1.4, Mn: 0.58, Cr: 0.028 },
+  },
+  {
+    id: 'GW-014', location: 'Lucknow Gomti Basin', district: 'Lucknow', state: 'Uttar Pradesh',
+    coordinates: { lat: 26.8467, lng: 80.9462 }, depth: 36, source_type: 'Open Well', date: '2025-04-20',
+    concentrations: { Pb: 0.026, Fe: 1.1, Mn: 0.35, Cr: 0.042, Cu: 0.52 },
+  },
+  {
+    id: 'GW-015', location: 'Guwahati Brahmaputra Valley', district: 'Kamrup', state: 'Assam',
+    coordinates: { lat: 26.1445, lng: 91.7362 }, depth: 30, source_type: 'Open Well', date: '2025-04-22',
+    concentrations: { Fe: 3.2, Mn: 0.95, As: 0.015, Pb: 0.008 },
+  },
+  {
+    id: 'GW-016', location: 'Nagpur MIDC Zone', district: 'Nagpur', state: 'Maharashtra',
+    coordinates: { lat: 21.1458, lng: 79.0882 }, depth: 65, source_type: 'Borewell', date: '2025-04-24',
+    concentrations: { Cr: 0.055, Mn: 0.42, Fe: 0.85, Cu: 0.62, Zn: 1.9 },
+  },
+  {
+    id: 'GW-017', location: 'Visakhapatnam Coastal Zone', district: 'Visakhapatnam', state: 'Andhra Pradesh',
+    coordinates: { lat: 17.6868, lng: 83.2185 }, depth: 48, source_type: 'Borewell', date: '2025-04-25',
+    concentrations: { Fe: 1.6, Mn: 0.48, Pb: 0.019, Cd: 0.003, Cr: 0.038 },
+  },
 ];

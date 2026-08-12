@@ -7,37 +7,42 @@ import { Map, Layers, Flame, FileDown, Info, ShieldAlert, Sparkles, X, Droplets,
 
 const CLASS_COLORS = { safe: '#10b981', moderate: '#f59e0b', high: '#f97316', critical: '#dc2626' };
 
-// Indian States Geo-Polygons & Contamination Risk Levels for State-wise Heatmap
-const STATE_RISK_MAP = [
+// Regional Contamination Risk Heat Zones (Smooth Gradient Heatmap Rings)
+const REGIONAL_HEAT_ZONES = [
   {
-    name: 'Bihar', risk: 'high', color: '#dc2626', opacity: 0.35,
-    avgHMPI: 184.2, description: 'High Arsenic (As) & Iron (Fe) aquifer contamination across Gangetic plain aquifers.',
-    polygon: [[27.5, 84.0], [27.5, 88.0], [24.5, 88.0], [24.5, 84.0]],
+    name: 'Gangetic Plains (UP & Bihar)', risk: 'Critical Risk Zone', color: '#dc2626', opacity: 0.25,
+    avgHMPI: 200.4, center: [26.0, 82.5], radiusMeters: 280000,
+    description: 'High Gangetic Arsenic (As) & Tannery Chromium (Cr) industrial belt.',
   },
   {
-    name: 'Uttar Pradesh', risk: 'critical', color: '#dc2626', opacity: 0.38,
-    avgHMPI: 215.6, description: 'Severe Industrial Effluents & Chromium (Cr), Lead (Pb) contamination near Kanpur tannery belt.',
-    polygon: [[30.0, 77.0], [30.0, 84.5], [24.0, 84.5], [24.0, 77.0]],
+    name: 'North-West Industrial Belt (Delhi NCR & Haryana)', risk: 'High Risk Zone', color: '#f97316', opacity: 0.22,
+    avgHMPI: 172.1, center: [28.6, 77.2], radiusMeters: 180000,
+    description: 'Yamuna floodplains heavy metal runoff & electroplating waste.',
   },
   {
-    name: 'Gujarat', risk: 'high', color: '#f97316', opacity: 0.32,
-    avgHMPI: 168.4, description: 'Chemical industrial belt (Vapi/Ankleshwar) with elevated Cadmium (Cd) & Lead (Pb).',
-    polygon: [[24.5, 68.5], [24.5, 74.5], [20.0, 74.5], [20.0, 68.5]],
+    name: 'Gujarat Chemical Corridor (Vapi-Ankleshwar)', risk: 'High Risk Zone', color: '#f97316', opacity: 0.24,
+    avgHMPI: 168.4, center: [21.5, 72.9], radiusMeters: 170000,
+    description: 'Chemical industrial sludge elevation of Cadmium (Cd) & Lead (Pb).',
   },
   {
-    name: 'Chhattisgarh', risk: 'moderate', color: '#f59e0b', opacity: 0.28,
-    avgHMPI: 135.0, description: 'Mining & Steel plant run-off causing Iron (Fe) & Manganese (Mn) elevation.',
-    polygon: [[24.0, 80.0], [24.0, 84.5], [17.8, 84.5], [17.8, 80.0]],
+    name: 'Mumbai-Thane Industrial Belt', risk: 'High Risk Zone', color: '#f97316', opacity: 0.22,
+    avgHMPI: 155.8, center: [19.1, 72.9], radiusMeters: 120000,
+    description: 'Heavy metal runoff (Lead, Chromium, Cadmium) near industrial estates.',
   },
   {
-    name: 'Rajasthan', risk: 'moderate', color: '#f59e0b', opacity: 0.22,
-    avgHMPI: 112.8, description: 'Deep groundwater salinity & localized Fluoride/Arsenic pockets in arid zones.',
-    polygon: [[30.2, 69.5], [30.2, 78.2], [23.0, 78.2], [23.0, 69.5]],
+    name: 'Central Mining Basin (Chhattisgarh & Odisha)', risk: 'Moderate Risk Zone', color: '#f59e0b', opacity: 0.20,
+    avgHMPI: 135.0, center: [21.2, 82.0], radiusMeters: 220000,
+    description: 'Iron (Fe) & Manganese (Mn) mining runoff from steel plant slag.',
   },
   {
-    name: 'Kerala', risk: 'safe', color: '#10b981', opacity: 0.20,
-    avgHMPI: 76.5, description: 'High coastal monsoon recharge maintains safe HMPI limits across open wells.',
-    polygon: [[12.8, 74.8], [12.8, 77.5], [8.2, 77.5], [8.2, 74.8]],
+    name: 'Southern Tech-Industrial Corridor (BLR-CHN-HYD)', risk: 'Moderate Risk Zone', color: '#f59e0b', opacity: 0.18,
+    avgHMPI: 118.5, center: [14.5, 78.5], radiusMeters: 290000,
+    description: 'E-waste & electroplating Chromium/Nickel urban runoff.',
+  },
+  {
+    name: 'South Coastal Aquifer Zone (Kerala & Coastal TN)', risk: 'Safe Zone', color: '#10b981', opacity: 0.18,
+    avgHMPI: 76.5, center: [10.0, 76.5], radiusMeters: 190000,
+    description: 'High monsoon aquifer recharge maintaining safe HMPI compliance.',
   },
 ];
 
@@ -181,15 +186,20 @@ export default function MapTab({ extraResults = [] }) {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
-            {/* State-Level Choropleth Heatmap Layer */}
-            {showStateRisk && STATE_RISK_MAP.map((st, i) => (
-              <Polygon key={i} positions={st.polygon} pathOptions={{ color: st.color, fillColor: st.color, fillOpacity: st.opacity, weight: 1.5, dashArray: '4 4' }}>
+            {/* Regional Contamination Risk Heatmap Zones */}
+            {showStateRisk && REGIONAL_HEAT_ZONES.map((zone, i) => (
+              <Circle key={i} center={zone.center} radius={zone.radiusMeters}
+                pathOptions={{
+                  color: zone.color, fillColor: zone.color,
+                  fillOpacity: zone.opacity, weight: 1.5, stroke: true
+                }}>
                 <LeafletTooltip sticky>
-                  <strong>{st.name} State Groundwater Zone</strong><br />
-                  Average State HMPI: <span style={{ color: st.color, fontWeight: 700 }}>{st.avgHMPI}</span><br />
-                  <span style={{ fontSize: 11, color: '#64748b' }}>{st.description}</span>
+                  <strong style={{ color: '#0f172a' }}>{zone.name}</strong><br />
+                  Risk Level: <span style={{ color: zone.color, fontWeight: 800 }}>{zone.risk}</span><br />
+                  Average Regional HMPI: <span style={{ fontWeight: 700 }}>{zone.avgHMPI}</span><br />
+                  <span style={{ fontSize: 11, color: '#64748b' }}>{zone.description}</span>
                 </LeafletTooltip>
-              </Polygon>
+              </Circle>
             ))}
 
             {/* Station Markers */}
