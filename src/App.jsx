@@ -4,39 +4,28 @@ import MapTab from './components/MapTab';
 import ReportsTab from './components/ReportsTab';
 import ReferenceTab from './components/ReferenceTab';
 import PredictiveTab from './components/PredictiveTab';
-import BlockchainTab from './components/BlockchainTab';
 import RemediationTab from './components/RemediationTab';
 import HealthMetricsTab from './components/HealthMetricsTab';
-import LoginModal from './components/LoginModal';
+import SystemFlowTab from './components/SystemFlowTab';
+import LoginPage from './components/LoginPage';
 import { NotificationStack, useNotifications } from './components/SharedComponents';
-import { Calculator, Map, BarChart2, BookOpen, Droplets, Cpu, ShieldCheck, Wrench, HeartPulse, User, LogIn } from 'lucide-react';
+import { Calculator, Map, BarChart2, BookOpen, Droplets, Cpu, Wrench, HeartPulse, User, LogOut, Workflow } from 'lucide-react';
 
 const TABS = [
   { id: 'calculator',  label: 'HMPI Calculator',      icon: <Calculator size={14} /> },
   { id: 'map',         label: 'GIS Heatmap',          icon: <Map size={14} /> },
   { id: 'health',      label: 'Health Metrics',       icon: <HeartPulse size={14} /> },
   { id: 'predictive',  label: 'Predictive AI',        icon: <Cpu size={14} /> },
-  { id: 'blockchain',  label: 'Security Assessment',  icon: <ShieldCheck size={14} /> },
   { id: 'remediation', label: 'Remediation & Alerts', icon: <Wrench size={14} /> },
+  { id: 'flow',        label: 'System Data Flow',     icon: <Workflow size={14} /> },
   { id: 'reports',     label: 'Reports & Data',       icon: <BarChart2 size={14} /> },
   { id: 'reference',   label: 'Reference Methods',    icon: <BookOpen size={14} /> },
 ];
 
-const HERO_PILLS = [
-  { icon: '🧪', label: '12 Heavy Metals', iconBg: '#dbeafe' },
-  { icon: '📐', label: '5 Pollution Indices', iconBg: '#ccfbf1' },
-  { icon: '❤️', label: 'Health Impact Assessment', iconBg: '#ffe4e6' },
-  { icon: '🤖', label: 'LSTM / ARIMA Predictive AI', iconBg: '#f3e8ff' },
-  { icon: '🛡️', label: 'Security Assessment & SHA-256 Audit', iconBg: '#dcfce7' },
-  { icon: '🚨', label: 'Automated SMS / Email Alerts', iconBg: '#fee2e2' },
-  { icon: '🗺️', label: 'GIS Hotspot Heatmap', iconBg: '#ffedd5' },
-];
-
 export default function App() {
+  const [user, setUser] = useState(null); // null = show LoginPage landing first
   const [activeTab, setActiveTab] = useState('calculator');
   const [extraResults, setExtraResults] = useState([]);
-  const [user, setUser] = useState({ name: 'Dr. Sunil Dangi', role: 'researcher' });
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const { notifs, addNotif, removeNotif } = useNotifications();
 
@@ -51,9 +40,14 @@ export default function App() {
 
   const roleTitles = {
     researcher: 'Researcher',
-    scientist: 'Scientist',
+    scientist: 'CGWB Scientist',
     policymaker: 'Policy Maker',
   };
+
+  // Dedicated Login Landing Screen
+  if (!user) {
+    return <LoginPage onLogin={u => setUser(u)} />;
+  }
 
   return (
     <>
@@ -70,13 +64,13 @@ export default function App() {
         {/* ── NAVIGATION ── */}
         <nav className="nav">
           <div className="nav-inner">
-            {/* Logo */}
-            <div className="nav-logo" onClick={() => setActiveTab('calculator')}>
+            {/* Brand Logo */}
+            <div className="nav-logo" onClick={() => setActiveTab('calculator')} style={{ cursor: 'pointer' }}>
               <div className="nav-logo-icon">
                 <Droplets size={20} color="white" />
               </div>
               <div className="nav-logo-text">
-                <span className="nav-logo-title">HMPI Analyzer</span>
+                <span className="nav-logo-title">JalTattva <span style={{ fontSize: 11, color: '#2563eb' }}>जलतत्व</span></span>
                 <span className="nav-logo-sub">Groundwater AI Platform</span>
               </div>
             </div>
@@ -92,22 +86,18 @@ export default function App() {
               ))}
             </div>
 
-            {/* Right badges & User Role Profile */}
+            {/* Right Profile & Sign Out */}
             <div className="nav-right">
-              <button onClick={() => setIsLoginOpen(true)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  background: '#f8fafc', border: '1.5px solid var(--border)',
-                  borderRadius: 20, padding: '5px 14px', cursor: 'pointer',
-                  fontSize: 12, fontWeight: 700, color: 'var(--text-700)',
-                  transition: 'all 0.18s'
-                }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#ffffff', border: '1.5px solid #dce4ef', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 700, color: 'var(--text-700)' }}>
                 <User size={13} color="#2563eb" />
                 <span>{user.name}</span>
-                <span style={{ color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '1px 8px', borderRadius: 10, fontSize: 10.5, textTransform: 'capitalize' }}>
+                <span style={{ color: '#2563eb', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '1px 8px', borderRadius: 10, fontSize: 10.5 }}>
                   {roleTitles[user.role] || user.role}
                 </span>
-              </button>
+                <button onClick={() => setUser(null)} title="Sign Out" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, display: 'flex', alignItems: 'center', color: '#94a3b8' }}>
+                  <LogOut size={13} />
+                </button>
+              </div>
 
               <div className="nav-who-badge">
                 <div className="nav-who-dot" />
@@ -128,33 +118,22 @@ export default function App() {
 
             {/* Title */}
             <h1 className="hero-title">
-              Heavy Metal Pollution<br />
-              <span className="grad-text">Index</span>{' '}
-              <span className="grad-text-teal">Computation Engine</span>
+              JalTattva <span className="grad-text">Groundwater Quality</span><br />
+              <span className="grad-text-teal">Heavy Metal Intelligence Engine</span>
             </h1>
 
             {/* Subtitle */}
             <p className="hero-sub">
-              Automates HMPI, HEI, Contamination Factor, Degree of Contamination, <strong>Health Impact Assessment</strong> &amp; Security Assessment.
+              Automates HMPI, HEI, Degree of Contamination, <strong>Health Impact Assessment</strong>, 15-Year AI Trend Analysis &amp; Treatment Remediation Planning.
             </p>
 
-            {/* Feature pills */}
-            <div className="hero-pills">
-              {HERO_PILLS.map((p, i) => (
-                <div key={i} className="hero-pill" style={{ animationDelay: `${i * 0.04}s` }}>
-                  <div className="hero-pill-icon" style={{ background: p.iconBg }}>{p.icon}</div>
-                  {p.label}
-                </div>
-              ))}
-            </div>
-
-            {/* Stats strip */}
-            <div className="hero-stats-row">
+            {/* Compact Quick Stats Strip */}
+            <div className="hero-stats-row" style={{ marginTop: 24 }}>
               {[
                 { val: '17', lbl: 'Groundwater Stations' },
                 { val: '5',  lbl: 'Pollution Indices' },
                 { val: 'Health Impact', lbl: 'Pop. Assessment' },
-                { val: 'SHA-256', lbl: 'Security Audit' },
+                { val: '15-Year', lbl: 'AI Forecast' },
                 { val: 'GIS Heatmap', lbl: 'Hotspot Zones' },
               ].map((s, i) => (
                 <div key={i} className="hero-stat">
@@ -172,8 +151,8 @@ export default function App() {
           {activeTab === 'map'         && <MapTab extraResults={extraResults} />}
           {activeTab === 'health'      && <HealthMetricsTab />}
           {activeTab === 'predictive'  && <PredictiveTab />}
-          {activeTab === 'blockchain'  && <BlockchainTab />}
           {activeTab === 'remediation' && <RemediationTab />}
+          {activeTab === 'flow'        && <SystemFlowTab />}
           {activeTab === 'reports'     && <ReportsTab extraResults={extraResults} />}
           {activeTab === 'reference'   && <ReferenceTab />}
         </main>
@@ -181,7 +160,7 @@ export default function App() {
         {/* ── FOOTER ── */}
         <footer className="footer">
           <div style={{ fontSize: 12, color: 'var(--text-400)', maxWidth: 800, margin: '0 auto', lineHeight: 1.9 }}>
-            <span style={{ color: 'var(--text-700)', fontWeight: 700 }}>HMPI Analyzer</span> —
+            <span style={{ color: 'var(--text-700)', fontWeight: 700 }}>JalTattva (जलतत्व)</span> —
             Automated Heavy Metal Pollution Index Computation for Groundwater Quality Assessment.{' '}
             Implements <strong>WHO (2017)</strong> &amp; <strong>BIS IS:10500:2012</strong> standards.
             <span style={{ color: 'var(--text-300)', marginLeft: 8 }}>
@@ -190,9 +169,6 @@ export default function App() {
           </div>
         </footer>
       </div>
-
-      {/* Login / Role Selection Modal */}
-      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} onLogin={u => setUser(u)} currentUser={user} />
 
       <NotificationStack notifs={notifs} onRemove={removeNotif} />
     </>

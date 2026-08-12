@@ -123,9 +123,37 @@ export default function ReferenceTab() {
         </div>
       </div>
 
+      {/* Official Government & International Ministry Links */}
+      <div className="card mt-24" style={{ background: '#f8fafc', borderColor: '#bfdbfe' }}>
+        <div className="card-title" style={{ fontSize: 16, marginBottom: 12, color: '#1e40af' }}>
+          🌐 Official Ministry &amp; Government Water Portals
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+          {[
+            { name: 'Ministry of Jal Shakti', url: 'https://jalshakti-dowr.gov.in/', desc: 'Department of Water Resources, Govt of India' },
+            { name: 'Central Ground Water Board (CGWB)', url: 'http://cgwb.gov.in/', desc: 'National Hydrogeological Monitoring Network' },
+            { name: 'Central Pollution Control Board (CPCB)', url: 'https://cpcb.nic.in/', desc: 'Environmental Quality & Effluent Standards' },
+            { name: 'WHO Water Quality Guidelines', url: 'https://www.who.int/water_sanitation_health/water-quality/', desc: 'Global Drinking Water Standards (4th Ed)' },
+            { name: 'Bureau of Indian Standards (BIS)', url: 'https://bis.gov.in/', desc: 'IS 10500:2012 Drinking Water Specs' },
+          ].map((link, idx) => (
+            <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer"
+              style={{
+                display: 'block', padding: '12px 14px', background: '#ffffff',
+                border: '1.5px solid #dce4ef', borderRadius: 12, textDecoration: 'none',
+                transition: 'all 0.18s'
+              }}>
+              <div style={{ fontSize: 13.5, fontWeight: 800, color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                {link.name} <Globe size={14} />
+              </div>
+              <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 4 }}>{link.desc}</div>
+            </a>
+          ))}
+        </div>
+      </div>
+
       {/* References */}
-      <div className="card mt-24" style={{ background: 'rgba(0,0,0,0.2)' }}>
-        <div className="card-title" style={{ fontSize: 15, marginBottom: 12 }}><BookOpen size={16} /> Key References</div>
+      <div className="card mt-24" style={{ background: '#ffffff' }}>
+        <div className="card-title" style={{ fontSize: 15, marginBottom: 12 }}><BookOpen size={16} /> Key Peer-Reviewed References</div>
         {[
           'Prasad, B., & Bose, J.M. (2001). Evaluation of the heavy metal pollution index for surface and spring water near a limestone mining area of the lower Himalayas.',
           'Tiwari, A.K., et al. (2014). Evaluation of metal contamination in coal mine groundwater: A case study from the Johilla coalfield area.',
@@ -135,7 +163,7 @@ export default function ReferenceTab() {
           'Bureau of Indian Standards (2012). IS 10500:2012 Drinking Water Specification.',
           'Edet, A.E., & Offiong, O.E. (2002). Evaluation of water quality pollution indices for heavy metal contamination monitoring.',
         ].map((ref, i) => (
-          <div key={i} style={{ fontSize: 12, color: '#4a6680', lineHeight: 1.6, paddingLeft: 16, borderLeft: '2px solid rgba(0,212,255,0.2)', marginBottom: 10 }}>{ref}</div>
+          <div key={i} style={{ fontSize: 12, color: 'var(--text-500)', lineHeight: 1.6, paddingLeft: 16, borderLeft: '2px solid #2563eb', marginBottom: 10 }}>{ref}</div>
         ))}
       </div>
     </div>
