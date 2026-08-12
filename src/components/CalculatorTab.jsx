@@ -169,7 +169,7 @@ export default function CalculatorTab({ onAddResult }) {
             </div>
             <div>
               <div className="card-title" style={{ fontSize: 15 }}>Sample Information</div>
-              <div style={{ fontSize: 12, color: 'var(--text-400)' }}>Metadata &amp; geo-coordinates</div>
+              <div style={{ fontSize: 12, color: 'var(--text-400)' }}>Sample metadata &amp; source details</div>
             </div>
           </div>
           <div className="form-row">
@@ -180,16 +180,6 @@ export default function CalculatorTab({ onAddResult }) {
             <div className="form-group">
               <label className="form-label">Location Name</label>
               <input className="form-input" placeholder="Patna, Bihar" value={sampleInfo.location} onChange={e => setSampleInfo(p => ({ ...p, location: e.target.value }))} />
-            </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Latitude</label>
-              <input className="form-input" type="number" placeholder="25.5941" value={sampleInfo.lat} onChange={e => setSampleInfo(p => ({ ...p, lat: e.target.value }))} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Longitude</label>
-              <input className="form-input" type="number" placeholder="85.1376" value={sampleInfo.lng} onChange={e => setSampleInfo(p => ({ ...p, lng: e.target.value }))} />
             </div>
           </div>
           <div className="form-row">
