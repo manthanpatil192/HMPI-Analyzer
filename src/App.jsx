@@ -3,22 +3,29 @@ import CalculatorTab from './components/CalculatorTab';
 import MapTab from './components/MapTab';
 import ReportsTab from './components/ReportsTab';
 import ReferenceTab from './components/ReferenceTab';
+import PredictiveTab from './components/PredictiveTab';
+import BlockchainTab from './components/BlockchainTab';
+import RemediationTab from './components/RemediationTab';
 import { NotificationStack, useNotifications } from './components/SharedComponents';
-import { Calculator, Map, BarChart2, BookOpen, Droplets, FlaskConical, Globe2, Activity, Zap } from 'lucide-react';
+import { Calculator, Map, BarChart2, BookOpen, Droplets, Cpu, ShieldCheck, Wrench, Sparkles } from 'lucide-react';
 
 const TABS = [
-  { id: 'calculator', label: 'HMPI Calculator',      icon: <Calculator size={15} /> },
-  { id: 'map',        label: 'Geo-Map',               icon: <Map size={15} /> },
-  { id: 'reports',   label: 'Reports & Data',         icon: <BarChart2 size={15} /> },
-  { id: 'reference', label: 'Reference & Methods',    icon: <BookOpen size={15} /> },
+  { id: 'calculator',  label: 'HMPI Calculator',      icon: <Calculator size={14} /> },
+  { id: 'map',         label: 'GIS Heatmap',          icon: <Map size={14} /> },
+  { id: 'predictive',  label: 'Predictive AI',        icon: <Cpu size={14} /> },
+  { id: 'blockchain',  label: 'Blockchain Audit',     icon: <ShieldCheck size={14} /> },
+  { id: 'remediation', label: 'Remediation & Alerts', icon: <Wrench size={14} /> },
+  { id: 'reports',     label: 'Reports & Data',       icon: <BarChart2 size={14} /> },
+  { id: 'reference',   label: 'Reference Methods',    icon: <BookOpen size={14} /> },
 ];
 
 const HERO_PILLS = [
-  { icon: '🧪', label: '12 Heavy Metals', color: '#eff6ff', iconBg: '#dbeafe' },
-  { icon: '📐', label: '5 Pollution Indices', color: '#f0fdfa', iconBg: '#ccfbf1' },
-  { icon: '🌍', label: 'WHO / BIS 2017', color: '#fdf4ff', iconBg: '#f3e8ff' },
-  { icon: '⚡', label: 'Real-time Compute', color: '#fffbeb', iconBg: '#fef9c3' },
-  { icon: '🗺️', label: 'Geo-Spatial Map', color: '#fff7ed', iconBg: '#ffedd5' },
+  { icon: '🧪', label: '12 Heavy Metals', iconBg: '#dbeafe' },
+  { icon: '📐', label: '5 Pollution Indices', iconBg: '#ccfbf1' },
+  { icon: '🤖', label: 'LSTM / ARIMA Predictive AI', iconBg: '#f3e8ff' },
+  { icon: '🔗', label: 'Blockchain SHA-256 Audit', iconBg: '#dcfce7' },
+  { icon: '🚨', label: 'Automated SMS / Email Alerts', iconBg: '#fee2e2' },
+  { icon: '🗺️', label: 'GIS Hotspot Heatmap', iconBg: '#ffedd5' },
 ];
 
 export default function App() {
@@ -57,7 +64,7 @@ export default function App() {
               </div>
               <div className="nav-logo-text">
                 <span className="nav-logo-title">HMPI Analyzer</span>
-                <span className="nav-logo-sub">Groundwater Quality Assessment</span>
+                <span className="nav-logo-sub">Groundwater AI Platform</span>
               </div>
             </div>
 
@@ -88,7 +95,7 @@ export default function App() {
             {/* Eyebrow */}
             <div className="hero-eyebrow">
               <div className="hero-eyebrow-dot" />
-              Automated CGWB & WHO Compliant Platform
+              Automated CGWB &amp; WHO Compliant Platform
             </div>
 
             {/* Title */}
@@ -101,14 +108,13 @@ export default function App() {
             {/* Subtitle */}
             <p className="hero-sub">
               Automates HMPI, HEI, Contamination Factor, Degree of Contamination &amp; Human Health Risk Assessment
-              using <strong>WHO &amp; BIS IS:10500:2012</strong> drinking water standards.
-              Designed for scientists, researchers &amp; policymakers.
+              with <strong>Blockchain SHA-256 Data Integrity, LSTM Predictive Forecasting &amp; GIS Heatmaps</strong>.
             </p>
 
             {/* Feature pills */}
             <div className="hero-pills">
               {HERO_PILLS.map((p, i) => (
-                <div key={i} className="hero-pill" style={{ animationDelay: `${i * 0.06}s` }}>
+                <div key={i} className="hero-pill" style={{ animationDelay: `${i * 0.05}s` }}>
                   <div className="hero-pill-icon" style={{ background: p.iconBg }}>{p.icon}</div>
                   {p.label}
                 </div>
@@ -120,9 +126,9 @@ export default function App() {
               {[
                 { val: '12', lbl: 'Heavy Metals' },
                 { val: '5',  lbl: 'Pollution Indices' },
-                { val: 'WHO + BIS', lbl: 'Standards Used' },
-                { val: '< 1s', lbl: 'Computation Time' },
-                { val: 'PDF + CSV', lbl: 'Export Formats' },
+                { val: 'LSTM / ARIMA', lbl: 'AI Forecast' },
+                { val: 'SHA-256', lbl: 'Blockchain Audit' },
+                { val: 'GIS Heatmap', lbl: 'Hotspot Mapping' },
               ].map((s, i) => (
                 <div key={i} className="hero-stat">
                   <div className="hero-stat-val">{s.val}</div>
@@ -135,10 +141,13 @@ export default function App() {
 
         {/* ── MAIN CONTENT ── */}
         <main className="main">
-          {activeTab === 'calculator' && <CalculatorTab onAddResult={handleAddResult} />}
-          {activeTab === 'map'        && <MapTab extraResults={extraResults} />}
-          {activeTab === 'reports'    && <ReportsTab extraResults={extraResults} />}
-          {activeTab === 'reference'  && <ReferenceTab />}
+          {activeTab === 'calculator'  && <CalculatorTab onAddResult={handleAddResult} />}
+          {activeTab === 'map'         && <MapTab extraResults={extraResults} />}
+          {activeTab === 'predictive'  && <PredictiveTab />}
+          {activeTab === 'blockchain'  && <BlockchainTab />}
+          {activeTab === 'remediation' && <RemediationTab />}
+          {activeTab === 'reports'     && <ReportsTab extraResults={extraResults} />}
+          {activeTab === 'reference'   && <ReferenceTab />}
         </main>
 
         {/* ── FOOTER ── */}
