@@ -69,7 +69,7 @@ export default function LoginPage({ onLogin }) {
             </div>
             <div>
               <h1 style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 34, fontWeight: 900, color: 'var(--text-900)', letterSpacing: '-1px', lineHeight: 1.1 }}>
-                JalTattva <span style={{ fontSize: 18, color: '#2563eb', fontWeight: 700 }}>जलतत्व</span>
+                JAL TATVA <span style={{ fontSize: 18, color: '#2563eb', fontWeight: 700 }}>जलतत्व</span>
               </h1>
               <div style={{ fontSize: 13, color: 'var(--text-400)', fontWeight: 600 }}>Groundwater Intelligence &amp; Heavy Metal Portal</div>
             </div>
@@ -104,7 +104,7 @@ export default function LoginPage({ onLogin }) {
         }}>
           <div style={{ marginBottom: 22 }}>
             <h2 style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 22, fontWeight: 800, color: 'var(--text-900)' }}>
-              Sign In to JalTattva Portal
+              Sign In to JAL TATVA Portal
             </h2>
             <p style={{ fontSize: 13, color: 'var(--text-400)', marginTop: 4 }}>
               Select your role to unlock customized tools

@@ -6,10 +6,9 @@ import ReferenceTab from './components/ReferenceTab';
 import PredictiveTab from './components/PredictiveTab';
 import RemediationTab from './components/RemediationTab';
 import HealthMetricsTab from './components/HealthMetricsTab';
-import SystemFlowTab from './components/SystemFlowTab';
 import LoginPage from './components/LoginPage';
 import { NotificationStack, useNotifications } from './components/SharedComponents';
-import { Calculator, Map, BarChart2, BookOpen, Droplets, Cpu, Wrench, HeartPulse, User, LogOut, Workflow } from 'lucide-react';
+import { Calculator, Map, BarChart2, BookOpen, Droplets, Cpu, Wrench, HeartPulse, User, LogOut } from 'lucide-react';
 
 const TABS = [
   { id: 'calculator',  label: 'HMPI Calculator',      icon: <Calculator size={14} /> },
@@ -17,7 +16,6 @@ const TABS = [
   { id: 'health',      label: 'Health Metrics',       icon: <HeartPulse size={14} /> },
   { id: 'predictive',  label: 'Predictive AI',        icon: <Cpu size={14} /> },
   { id: 'remediation', label: 'Remediation & Alerts', icon: <Wrench size={14} /> },
-  { id: 'flow',        label: 'System Data Flow',     icon: <Workflow size={14} /> },
   { id: 'reports',     label: 'Reports & Data',       icon: <BarChart2 size={14} /> },
   { id: 'reference',   label: 'Reference Methods',    icon: <BookOpen size={14} /> },
 ];
@@ -70,7 +68,7 @@ export default function App() {
                 <Droplets size={20} color="white" />
               </div>
               <div className="nav-logo-text">
-                <span className="nav-logo-title">JalTattva <span style={{ fontSize: 11, color: '#2563eb' }}>जलतत्व</span></span>
+                <span className="nav-logo-title">JAL TATVA <span style={{ fontSize: 11, color: '#2563eb' }}>जलतत्व</span></span>
                 <span className="nav-logo-sub">Groundwater AI Platform</span>
               </div>
             </div>
@@ -118,7 +116,7 @@ export default function App() {
 
             {/* Title */}
             <h1 className="hero-title">
-              JalTattva <span className="grad-text">Groundwater Quality</span><br />
+              JAL TATVA <span className="grad-text">Groundwater Quality</span><br />
               <span className="grad-text-teal">Heavy Metal Intelligence Engine</span>
             </h1>
 
@@ -152,7 +150,6 @@ export default function App() {
           {activeTab === 'health'      && <HealthMetricsTab />}
           {activeTab === 'predictive'  && <PredictiveTab />}
           {activeTab === 'remediation' && <RemediationTab />}
-          {activeTab === 'flow'        && <SystemFlowTab />}
           {activeTab === 'reports'     && <ReportsTab extraResults={extraResults} />}
           {activeTab === 'reference'   && <ReferenceTab />}
         </main>
@@ -160,7 +157,7 @@ export default function App() {
         {/* ── FOOTER ── */}
         <footer className="footer">
           <div style={{ fontSize: 12, color: 'var(--text-400)', maxWidth: 800, margin: '0 auto', lineHeight: 1.9 }}>
-            <span style={{ color: 'var(--text-700)', fontWeight: 700 }}>JalTattva (जलतत्व)</span> —
+            <span style={{ color: 'var(--text-700)', fontWeight: 700 }}>JAL TATVA (जलतत्व)</span> —
             Automated Heavy Metal Pollution Index Computation for Groundwater Quality Assessment.{' '}
             Implements <strong>WHO (2017)</strong> &amp; <strong>BIS IS:10500:2012</strong> standards.
             <span style={{ color: 'var(--text-300)', marginLeft: 8 }}>
